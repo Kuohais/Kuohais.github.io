@@ -1,0 +1,23 @@
+.card-widget,
+.recent-post-item:not(:first-child),
+#footer-wrap {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 280px;
+}
+
+#aside-content .sticky_layout {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 480px;
+}
+
+.fa-cog.fa-spin {
+  animation-duration: 4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fa-cog.fa-spin,
+  .scroll-down-effects,
+  .card-announcement-animation {
+    animation: none !important;
+  }
+}

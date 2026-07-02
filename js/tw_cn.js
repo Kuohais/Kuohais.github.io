@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-document.addEventListener('DOMContentLoaded', function () {
+(function () {
   const translate = GLOBAL_CONFIG.translate
   const snackbarData = GLOBAL_CONFIG.Snackbar
   const defaultEncoding = translate.defaultEncoding // 網站默認語言，1: 繁體中文, 2: 簡體中文
@@ -97,4 +97,4 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   translateInitialization()
   document.addEventListener('pjax:complete', translateInitialization)
-})
+})()
