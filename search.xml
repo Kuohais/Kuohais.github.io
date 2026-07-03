@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>《我的建站笔记》 三</title>
+    <url>/2021/04/27/%E3%80%8A%E6%88%91%E7%9A%84%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0%E3%80%8B%E4%B8%89/</url>
+    <content>如果一切顺利的话，现在你应该可以真正的输出。前言 博客的文章编辑器 markdown 语言规则 文章的放置 上传至互联网 域名 CNAME hexo</content>
+  </entry>
+  <entry>
+    <title>《我的建站笔记》 二</title>
+    <url>/2021/04/12/%E3%80%8A%E6%88%91%E7%9A%84%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0%E3%80%8B%E4%BA%8C/</url>
+    <content>进行到这里，你应该已经有了一个基本的网页结构。修改你的主题 Butterfly 配置任务栏 图片设置 hexo</content>
+  </entry>
+  <entry>
+    <title>《我的建站笔记》 一</title>
+    <url>/2021/04/12/%E3%80%8A%E6%88%91%E7%9A%84%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0%E3%80%8B%E4%B8%80/</url>
+    <content>梦开始的地方 hexo是什么 安装HEXO Node.js Git npm 淘宝镜像 blog文件夹 本地预览 localhost</content>
+  </entry>
+  <entry>
+    <title>关于海生</title>
+    <url>/about/</url>
+    <content>阔海生 阔海生与海 May the force be with you 唯有时驻足敛羽，方可远行 Hexo Butterfly</content>
+  </entry>
+  <entry>
+    <title>时间线</title>
+    <url>/timeline/</url>
+    <content>2021 建站笔记 博客上线 阔海生与海</content>
+  </entry>
+</search>

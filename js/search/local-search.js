@@ -41,6 +41,16 @@ window.addEventListener('load', () => {
     searchClickFn()
   })
 
+  function parseSearchKeywords (query) {
+    return query.trim().toLowerCase().split(/[\s]+/).filter(function (s) { return s.length > 0 })
+  }
+
+  function getValidSearchKeywords (keywords) {
+    return keywords.filter(function (kw) { return kw.length >= 2 })
+  }
+
+  const QUERY_TOO_SHORT_MSG = '请输入至少 2 个字符的关键词（不支持单字、单数字或单个符号）'
+
   function search (path) {
     fetch(GLOBAL_CONFIG.root + path)
       .then(response => response.text())
@@ -56,11 +66,18 @@ window.addEventListener('load', () => {
 
         const $input = document.querySelector('#local-search-input input')
         const $resultContent = document.getElementById('local-search-results')
+        const $loading = document.getElementById('loading-database')
+        if ($loading) $loading.style.display = 'none'
         $input.addEventListener('input', function () {
           let str = '<div class="search-result-list">'
-          const keywords = this.value.trim().toLowerCase().split(/[\s]+/)
+          const rawKeywords = parseSearchKeywords(this.value)
+          const keywords = getValidSearchKeywords(rawKeywords)
           $resultContent.innerHTML = ''
           if (this.value.trim().length <= 0) return
+          if (keywords.length === 0) {
+            $resultContent.innerHTML = '<div id="local-search__hits-empty">' + QUERY_TOO_SHORT_MSG + '</div>'
+            return
+          }
           let count = 0
           // perform local searching
           datas.forEach(function (data) {

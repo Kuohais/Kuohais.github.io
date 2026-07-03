@@ -1,7 +1,7 @@
 window.COMMENTS_CONFIG = {
   provider: 'twikoo',
   twikoo: {
-    envId: 'https://kuohais-blog.hf.space',
+    envId: 'https://twikoo.kitchas.cn',
     region: '',
     lang: 'zh-CN',
     lazyload: false

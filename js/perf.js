@@ -3,7 +3,6 @@
 
   var FA_BASE = 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css'
   var FA_FILES = ['fontawesome.min.css', 'solid.min.css', 'regular.min.css', 'brands.min.css']
-  var fireworksLoaded = false
   var twCnLoaded = false
 
   function defer (cb, timeout) {
@@ -60,15 +59,7 @@
     })
   }
 
-  function loadFireworks () {
-    if (fireworksLoaded) return
-    if (window.matchMedia('(max-width: 768px)').matches) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    fireworksLoaded = true
-    loadScript('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/fireworks.min.js').catch(function () {})
-  }
-
-  function loadBusuanzi () {
+  function loadTwCn () {
     var uv = document.getElementById('busuanzi_value_site_uv')
     var pv = document.getElementById('busuanzi_value_site_pv')
     if (!uv && !pv) return
@@ -106,16 +97,6 @@
       translateBtn.addEventListener('mouseenter', loadTwCn, { once: true })
       translateBtn.addEventListener('focus', loadTwCn, { once: true })
       translateBtn.addEventListener('click', loadTwCn, { once: true })
-    }
-
-    var activateFireworks = function () {
-      loadFireworks()
-      window.removeEventListener('scroll', activateFireworks)
-      window.removeEventListener('pointerdown', activateFireworks)
-    }
-    if (document.querySelector('canvas.fireworks')) {
-      window.addEventListener('scroll', activateFireworks, { once: true, passive: true })
-      window.addEventListener('pointerdown', activateFireworks, { once: true })
     }
   }
 

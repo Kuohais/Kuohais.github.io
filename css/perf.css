@@ -21,3 +21,8 @@
     animation: none !important;
   }
 }
+
+#sidebar #sidebar-menus > .author-avatar img:hover,
+#aside-content .card-info img:hover {
+  transform: none !important;
+}
