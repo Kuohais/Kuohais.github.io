@@ -534,6 +534,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       // handle some cases
       typeof utterancesTheme === 'function' && utterancesTheme()
+      typeof twikooTheme === 'function' && twikooTheme()
       typeof FB === 'object' && window.loadFBComment()
       window.DISQUS && document.getElementById('disqus_thread').children.length && setTimeout(() => window.disqusReset(), 200)
     },

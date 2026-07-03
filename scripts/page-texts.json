@@ -1,0 +1,36 @@
+{
+  "about": {
+    "title": "关于海生",
+    "header": "关于海生",
+    "canonical": "/about/",
+    "body": "<div id=\"page\"><div id=\"article-container\" class=\"post-content\"><h1 class=\"post-title\">关于海生</h1><div class=\"post-content\"><p>你好，我是阔海生，这里是「阔海生与海」。</p><p>这个博客记录我的学习、建站笔记和一些生活片段。副标题是 <em>May the force be with you.</em>，签名是「唯有时驻足敛羽，方可远行」。</p><p>本站基于 Hexo + Butterfly 主题搭建，更多内容会持续补充，欢迎常来。</p><p>你可以在以下平台找到我：</p><ul><li><a href=\"https://github.com/Kuohais\" target=\"_blank\" rel=\"noopener\">GitHub</a></li><li><a href=\"https://www.zhihu.com/people/kuo-hai-sheng\" target=\"_blank\" rel=\"noopener\">知乎</a></li><li><a href=\"https://web.okjike.com/me\" target=\"_blank\" rel=\"noopener\">即刻</a></li></ul></div></div></div>"
+  },
+  "timeline": {
+    "title": "时间线",
+    "header": "时间线",
+    "canonical": "/timeline/",
+    "body": "<div id=\"page\"><div id=\"article-container\" class=\"post-content\"><h1 class=\"post-title\">时间线</h1><div class=\"post-content\"><div class=\"timeline\"><div class=\"timeline-item\"><div class=\"timeline-item-title\"><h3>2021-04-27</h3></div><div class=\"timeline-item-content\"><p>发布《我的建站笔记》第三篇，介绍文章编辑与域名部署。</p></div></div><div class=\"timeline-item\"><div class=\"timeline-item-title\"><h3>2021-04-12</h3></div><div class=\"timeline-item-content\"><p>发布《我的建站笔记》第一、二篇，记录 Hexo 安装与主题配置。</p></div></div><div class=\"timeline-item\"><div class=\"timeline-item-title\"><h3>2021-03-31</h3></div><div class=\"timeline-item-content\"><p>博客上线，开始运行「阔海生与海」。</p></div></div></div><p style=\"margin-top:1.5rem;color:var(--font-color);\">更多时间节点将陆续补充。</p></div></div></div>"
+  },
+  "categories": {
+    "title": "目录",
+    "header": "目录",
+    "canonical": "/categories/",
+    "body": "<div id=\"category\"><div class=\"article-sort-title\">全部分类</div><ul class=\"card-category-list\"><li class=\"card-category-list-item\"><a class=\"card-category-list-link\" href=\"/categories/%E3%80%8A%E6%88%91%E7%9A%84%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0%E3%80%8B/\"><span class=\"card-category-list-name\">《我的建站笔记》</span><span class=\"card-category-list-count\">3</span></a></li></ul></div>"
+  },
+  "tags": {
+    "title": "标签",
+    "header": "标签",
+    "canonical": "/tags/",
+    "body": "<div id=\"tag\"><div class=\"article-sort-title\">全部标签</div><div class=\"tag-cloud\"><p style=\"color:var(--font-color);padding:1rem 0;\">暂无标签，后续更新会在这里展示。</p></div></div>"
+  },
+  "announcement": "有趣小组件或将添加，欢迎常来逛逛。",
+  "postLabels": {
+    "published": "发表于",
+    "author": "作者: ",
+    "category": "分类: ",
+    "updated": "更新于: ",
+    "authorName": "阔海生"
+  },
+  "commentBlock": "<div id=\"post-comment\"><div class=\"comment-head\"><i class=\"fas fa-comments fa-fw\"></i><span class=\"comment-headline\">评论</span></div><div class=\"comment-wrap\"><div id=\"twikoo-wrap\"></div></div></div>",
+  "commentScripts": "<script defer src=\"/js/comments-config.js\"></script><script defer src=\"/js/twikoo.js\"></script>"
+}

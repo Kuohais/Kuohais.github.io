@@ -4,6 +4,6 @@ window.COMMENTS_CONFIG = {
     envId: 'https://kuohais-blog.hf.space',
     region: '',
     lang: 'zh-CN',
-    lazyload: true
+    lazyload: false
   }
 }
