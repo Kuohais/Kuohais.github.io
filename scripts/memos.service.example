@@ -1,0 +1,17 @@
+# /etc/systemd/system/memos.service
+# 安装后执行: systemctl daemon-reload && systemctl enable --now memos
+
+[Unit]
+Description=Memos note-taking service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Environment=MEMOS_INSTANCE_URL=https://memos.kitchas.cn
+ExecStart=/usr/local/bin/memos --port 5230 --data /opt/memos
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
