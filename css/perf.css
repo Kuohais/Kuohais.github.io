@@ -26,3 +26,23 @@
 #aside-content .card-info img:hover {
   transform: none !important;
 }
+
+/* 搜索按钮是 span 而非 a，需单独对齐导航链接颜色 */
+#nav #search-button .site-page {
+  color: var(--light-grey);
+}
+
+#nav #search-button .site-page:hover {
+  color: var(--white);
+}
+
+#page-header.not-top-img #nav #search-button .site-page,
+#page-header.nav-fixed #nav #search-button .site-page {
+  color: var(--font-color);
+  text-shadow: none;
+}
+
+#page-header.not-top-img #nav #search-button .site-page:hover,
+#page-header.nav-fixed #nav #search-button .site-page:hover {
+  color: #49b1f5;
+}
