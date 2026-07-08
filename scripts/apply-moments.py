@@ -52,12 +52,7 @@ html = html.replace(
 )
 
 moments_body = (
-    '<h1 class="post-title">碎碎念</h1>'
-    '<div class="post-content">'
-    '<p class="memos-intro">日常短评与配图，同步自 Memos。手机打开 '
-    '<a href="https://memos.kitchas.cn" target="_blank" rel="noopener">'
-    'memos.kitchas.cn</a> 即可发文。</p>'
-    '<p id="memos-feed-status" class="memos-status">加载中…</p>'
+    '<div class="post-content memos-page">'
     '<div id="memos-feed" class="memos-feed"></div>'
     '</div>'
 )
@@ -75,6 +70,8 @@ if 'href="/moments/"' not in html:
 memos_scripts = (
     '<script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>'
     '<script defer src="/js/memos-config.js"></script>'
+    '<script defer src="/js/comments-config.js"></script>'
+    '<script defer src="/js/twikoo.js"></script>'
     '<script defer src="/js/memos-feed.js"></script>'
 )
 if 'memos-feed.js' not in html:

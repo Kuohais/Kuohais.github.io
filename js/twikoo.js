@@ -36,18 +36,22 @@
 
   function initTwikoo (el, path) {
     var config = window.COMMENTS_CONFIG && window.COMMENTS_CONFIG.twikoo
-    var wrap = (el || document).querySelector('#twikoo-wrap')
-    if (!wrap || !window.twikoo || !config) return
+    if (!el || !window.twikoo || !config) return
+
+    if (!isConfigured(config)) {
+      showSetupHint(el)
+      return
+    }
 
     window.twikoo.init({
       envId: config.envId,
-      el: wrap,
+      el: el,
       region: config.region || '',
       path: path || location.pathname,
       lang: config.lang || 'zh-CN',
       onCommentLoaded: function () {
         if (typeof btf !== 'undefined' && btf.loadLightbox) {
-          btf.loadLightbox(document.querySelectorAll('#twikoo-wrap .tk-content img:not(.tk-owo-emotion)'))
+          btf.loadLightbox(el.querySelectorAll('.tk-content img:not(.tk-owo-emotion)'))
         }
       }
     })
@@ -60,13 +64,14 @@
       loadScript(TWIKOO_CDN).then(function () {
         initTwikoo(el, path)
       }).catch(function () {
-        var wrap = document.getElementById('twikoo-wrap')
-        if (wrap) {
-          wrap.innerHTML = '<p style="color:var(--font-color)">评论系统加载失败，请稍后重试。</p>'
+        if (el) {
+          el.innerHTML = '<p style="color:var(--font-color)">评论系统加载失败，请稍后重试。</p>'
         }
       })
     }
   }
+
+  window.loadTwikooFor = loadTwikoo
 
   function bootstrap () {
     var wrap = document.getElementById('twikoo-wrap')
@@ -78,7 +83,7 @@
       return
     }
 
-    var start = function () { loadTwikoo(document) }
+    var start = function () { loadTwikoo(wrap) }
     if (config.lazyload !== false && typeof btf !== 'undefined' && btf.loadComment) {
       btf.loadComment(wrap, start)
     } else {
@@ -89,10 +94,18 @@
   window.twikooTheme = function () {
     var config = window.COMMENTS_CONFIG && window.COMMENTS_CONFIG.twikoo
     if (!config || !isConfigured(config)) return
+
     var wrap = document.getElementById('twikoo-wrap')
-    if (!wrap) return
-    wrap.innerHTML = ''
-    loadTwikoo(document)
+    if (wrap) {
+      wrap.innerHTML = ''
+      loadTwikoo(wrap)
+    }
+
+    document.querySelectorAll('.twikoo-memo-wrap[data-path]').forEach(function (el) {
+      var path = el.getAttribute('data-path')
+      el.innerHTML = ''
+      loadTwikoo(el, path)
+    })
   }
 
   if (document.readyState === 'loading') {

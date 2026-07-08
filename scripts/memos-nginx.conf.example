@@ -25,16 +25,22 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
+    # 允许博客域名跨域读取公开 API（GitHub Pages / 自定义域名）
+    set $cors_origin "";
+    if ($http_origin ~* ^https?://(localhost(:\d+)?|127\.0\.0\.1(:\d+)?|kuohais\.github\.io|kitchas\.cn|www\.kitchas\.cn)$) {
+        set $cors_origin $http_origin;
+    }
+
     location /api/ {
         if ($request_method = OPTIONS) {
-            add_header Access-Control-Allow-Origin "https://kitchas.cn" always;
+            add_header Access-Control-Allow-Origin $cors_origin always;
             add_header Access-Control-Allow-Methods "GET, OPTIONS" always;
             add_header Access-Control-Allow-Headers "Content-Type" always;
             add_header Content-Length 0;
             return 204;
         }
 
-        add_header Access-Control-Allow-Origin "https://kitchas.cn" always;
+        add_header Access-Control-Allow-Origin $cors_origin always;
 
         proxy_pass http://127.0.0.1:5230;
         proxy_http_version 1.1;
@@ -45,7 +51,7 @@ server {
     }
 
     location /file/ {
-        add_header Access-Control-Allow-Origin "https://kitchas.cn" always;
+        add_header Access-Control-Allow-Origin $cors_origin always;
 
         proxy_pass http://127.0.0.1:5230;
         proxy_http_version 1.1;
