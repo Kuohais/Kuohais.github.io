@@ -1,0 +1,263 @@
+#page-header.kitchas-banner {
+  --kitchas-banner-bg: #f4f8fb;
+  --kitchas-banner-sky-deep: #e3eef7;
+  --kitchas-banner-text: #4c4948;
+  --kitchas-banner-text-wet: #ffffff;
+  --edge-min: 0.75rem;
+  --line-gap: 0.35rem;
+  --fortune-gap: 0.75rem;
+  --fortune-row: 3.25rem;
+  --scroll-zone: 4rem;
+  background-image: none !important;
+  background-color: var(--kitchas-banner-bg);
+  background-attachment: scroll;
+  color: var(--kitchas-banner-text);
+  position: relative;
+  overflow: hidden;
+}
+
+#page-header.kitchas-banner::before,
+[data-theme='dark'] #page-header.kitchas-banner::before {
+  display: none !important;
+}
+
+/* Full-banner dry/wet text layers — clip-path applied here (header coords) */
+.kitchas-banner__layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.kitchas-banner__layer--dry {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.kitchas-banner__layer--dry #site-info {
+  pointer-events: auto;
+}
+
+.kitchas-banner__layer--wet {
+  z-index: 3;
+  pointer-events: none;
+}
+
+#page-header.kitchas-banner.full_page #site-info,
+#page-header.kitchas-banner.full_page #site-info-wet {
+  position: absolute !important;
+  top: 3.5rem !important;
+  right: 0 !important;
+  bottom: calc(var(--scroll-zone) + var(--fortune-row) + var(--fortune-gap)) !important;
+  left: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  padding: max(0.75rem, var(--edge-min)) clamp(0.75rem, 2.8vw, 2rem) 0 !important;
+  transform: none !important;
+  z-index: 1;
+  display: block !important;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.kitchas-banner__content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.kitchas-banner__stack {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.kitchas-banner__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  align-items: stretch;
+  column-gap: clamp(0.5rem, 1.5vw, 1.25rem);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.kitchas-banner__welcome {
+  --module-font-size: 4rem;
+  --module-line-gap: var(--line-gap);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--module-line-gap);
+  height: 100%;
+  margin: 0;
+  line-height: 0.9;
+  text-align: left;
+}
+
+.kitchas-banner__welcome-line {
+  display: block;
+  font-weight: 700;
+  font-size: var(--module-font-size);
+  letter-spacing: -0.03em;
+  color: var(--kitchas-banner-text);
+  white-space: nowrap;
+  line-height: 0.9;
+}
+
+.kitchas-banner__welcome-line--domain {
+  font-size: calc(var(--module-font-size) * 1.06);
+}
+
+.kitchas-banner__date {
+  --module-font-size: 5rem;
+  --module-line-gap: var(--line-gap);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: var(--module-line-gap);
+  height: 100%;
+  line-height: 0.9;
+  text-align: right;
+}
+
+.kitchas-banner__month,
+.kitchas-banner__day {
+  display: block;
+  font-size: var(--module-font-size);
+  font-weight: 500;
+  color: var(--kitchas-banner-text);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  line-height: 0.9;
+}
+
+#page-header.kitchas-banner > .kitchas-banner__fortune,
+#page-header.kitchas-banner #kitchas-banner-fortune,
+#page-header.kitchas-banner #kitchas-banner-fortune-wet,
+.kitchas-banner__layer .kitchas-banner__fortune {
+  --module-font-size: 1.5rem;
+  position: absolute !important;
+  left: clamp(0.75rem, 2.8vw, 2rem) !important;
+  right: clamp(0.75rem, 2.8vw, 2rem) !important;
+  bottom: var(--scroll-zone) !important;
+  top: auto !important;
+  width: auto !important;
+  max-width: calc(100% - 2 * clamp(0.75rem, 2.8vw, 2rem)) !important;
+  height: var(--fortune-row) !important;
+  min-height: 2.75rem !important;
+  max-height: var(--fortune-row) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.04em !important;
+  text-align: left !important;
+  color: var(--kitchas-banner-text) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  font-size: var(--module-font-size) !important;
+  z-index: 2 !important;
+  pointer-events: none;
+  transform: none !important;
+}
+
+#page-header.kitchas-banner #kitchas-banner-fortune-wet {
+  z-index: 2 !important;
+}
+
+/* Wet (underwater) text: distinct light color */
+#page-header.kitchas-banner .kitchas-banner__wet,
+#page-header.kitchas-banner .kitchas-banner__wet .kitchas-banner__welcome-line,
+#page-header.kitchas-banner .kitchas-banner__wet .kitchas-banner__month,
+#page-header.kitchas-banner .kitchas-banner__wet .kitchas-banner__day,
+#page-header.kitchas-banner #kitchas-banner-fortune-wet {
+  color: var(--kitchas-banner-text-wet) !important;
+  text-shadow: 0 1px 2px rgba(20, 80, 120, 0.25);
+}
+
+/* Ocean scene behind text */
+.kitchas-banner__shapes {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.kitchas-banner__ocean {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#page-header.kitchas-banner #scroll-down {
+  z-index: 22;
+  height: var(--scroll-zone);
+  cursor: pointer;
+}
+
+#page-header.kitchas-banner #scroll-down .scroll-down-effects,
+#page-header.kitchas-banner #scroll-down i {
+  display: none !important;
+}
+
+.kitchas-banner--light #nav a,
+.kitchas-banner--light #nav #site-name,
+.kitchas-banner--light #nav #toggle-menu,
+.kitchas-banner--light #nav #search-button .site-page {
+  color: var(--kitchas-banner-text);
+  text-shadow: none;
+}
+
+.kitchas-banner--light #nav a:hover,
+.kitchas-banner--light #nav #site-name:hover,
+.kitchas-banner--light #nav #toggle-menu:hover,
+.kitchas-banner--light #nav #search-button .site-page:hover {
+  color: #49b1f5;
+}
+
+#nav {
+  z-index: 25;
+}
+
+@media screen and (max-height: 520px) and (orientation: landscape) {
+  #page-header.kitchas-banner {
+    --scroll-zone: 3.25rem;
+    --fortune-row: 2.25rem;
+  }
+
+  #page-header.kitchas-banner.full_page #site-info,
+  #page-header.kitchas-banner.full_page #site-info-wet {
+    top: 3rem !important;
+  }
+
+  #page-header.kitchas-banner > .kitchas-banner__fortune,
+  #page-header.kitchas-banner #kitchas-banner-fortune,
+  #page-header.kitchas-banner #kitchas-banner-fortune-wet {
+    min-height: 2rem !important;
+  }
+}

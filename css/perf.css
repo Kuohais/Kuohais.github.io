@@ -46,3 +46,62 @@
 #page-header.nav-fixed #nav #search-button .site-page:hover {
   color: #49b1f5;
 }
+
+/* Footer: favicon + two left-aligned text rows */
+#footer-wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  line-height: 1.55;
+  text-align: left;
+}
+
+#footer-wrap .footer-icon {
+  display: block;
+  width: auto;
+  height: calc(1.55em * 2 + 0.2rem);
+  flex-shrink: 0;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+#footer-wrap .footer-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+#footer-wrap .footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+}
+
+#footer-wrap .footer-row > * {
+  margin: 0;
+}
+
+#footer-wrap .footer-separator {
+  margin: 0 0.55rem;
+  opacity: 0.75;
+}
+
+#footer-wrap .copyright {
+  color: var(--light-grey);
+}
+
+#footer-wrap .footer-beian {
+  color: var(--light-grey);
+  text-decoration: none;
+}
+
+#footer-wrap .footer-beian:hover {
+  text-decoration: underline;
+}

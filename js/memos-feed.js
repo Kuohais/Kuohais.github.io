@@ -4,8 +4,6 @@
   var cfg = window.MEMOS_CONFIG || {}
   var base = String(cfg.baseUrl || 'https://memos.kitchas.cn').replace(/\/$/, '')
   var pageSize = cfg.pageSize || 30
-  var authorName = cfg.author || '阔海生'
-  var authorAvatar = cfg.avatar || '/img/avatar.png'
   var fallbackUrl = cfg.fallbackUrl || '/data/memos-feed.json'
 
   function escapeHtml (text) {
@@ -138,17 +136,13 @@
     return (
       '<article class="memos-item" id="memo-' + escapeHtml(id) + '">' +
       '<header class="memos-header">' +
-      '<img class="memos-avatar" src="' + escapeHtml(authorAvatar) + '" alt="' + escapeHtml(authorName) + '" loading="lazy">' +
-      '<div class="memos-meta">' +
-      '<span class="memos-author">' + escapeHtml(authorName) + '</span>' +
       '<time class="memos-time" datetime="' + escapeHtml(memo.createTime || '') + '">' +
       escapeHtml(time) +
       '</time>' +
-      '</div>' +
       '</header>' +
       '<div class="memos-content">' +
-      '<div class="memos-body">' + body + '</div>' +
       photos +
+      '<div class="memos-body">' + body + '</div>' +
       renderComments(id) +
       '</div>' +
       '</article>'
