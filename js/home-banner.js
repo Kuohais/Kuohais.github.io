@@ -735,6 +735,38 @@
     oceanState.raf = window.requestAnimationFrame(frame)
   }
 
+  var LUNAR_SRC = '/js/vendor/lunar.min.js'
+  var lunarRequested = false
+
+  function refreshFortune () {
+    var header = document.getElementById('page-header')
+    var fortuneEl = document.getElementById('kitchas-banner-fortune')
+    if (!header || !fortuneEl || !header.classList.contains('kitchas-banner')) return
+    var date = getBeijingDate()
+    var seed = hashSeed(dateKey(date))
+    fortuneEl.textContent = formatFortuneLine(date, seed) || fallbackFortune(date)
+    fitBannerLayout(header)
+  }
+
+  // Load the lunar library off the critical path; fortune shows a
+  // solar-date fallback until it arrives, then re-renders in place.
+  function loadLunarLazy () {
+    if (lunarRequested || typeof Solar !== 'undefined') return
+    lunarRequested = true
+    var inject = function () {
+      var s = document.createElement('script')
+      s.src = LUNAR_SRC
+      s.async = true
+      s.onload = refreshFortune
+      document.body.appendChild(s)
+    }
+    if (window.requestIdleCallback) {
+      window.requestIdleCallback(inject, { timeout: 1500 })
+    } else {
+      setTimeout(inject, 250)
+    }
+  }
+
   function renderBanner () {
     var header = document.getElementById('page-header')
     var monthEl = document.getElementById('kitchas-banner-month')
@@ -761,6 +793,7 @@
 
     startOcean(header, seed, palette)
     fitBannerLayout(header)
+    loadLunarLazy()
     return true
   }
 

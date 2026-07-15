@@ -45,9 +45,9 @@
     var marker = document.createElement('meta')
     marker.id = 'fa-perf-loaded'
     document.head.appendChild(marker)
-    return FA_FILES.reduce(function (chain, file) {
-      return chain.then(function () { return loadStylesheet(FA_BASE + '/' + file) })
-    }, Promise.resolve())
+    return Promise.all(FA_FILES.map(function (file) {
+      return loadStylesheet(FA_BASE + '/' + file)
+    }))
   }
 
   function enableNativeLazyLoad () {
@@ -59,7 +59,7 @@
     })
   }
 
-  function loadTwCn () {
+  function loadBusuanzi () {
     var uv = document.getElementById('busuanzi_value_site_uv')
     var pv = document.getElementById('busuanzi_value_site_pv')
     if (!uv && !pv) return
