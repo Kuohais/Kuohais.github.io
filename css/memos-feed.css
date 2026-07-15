@@ -1,5 +1,6 @@
 .memos-page {
   padding: 0.5rem 0 1rem;
+  min-width: 0;
 }
 
 .memos-loading,
@@ -21,6 +22,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  min-width: 0;
 }
 
 .memos-item {
@@ -29,6 +31,9 @@
   border: 1px solid var(--hr-border);
   background: var(--card-bg);
   transition: box-shadow 0.25s ease, transform 0.25s ease;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .memos-item:hover {
@@ -39,6 +44,7 @@
   display: flex;
   align-items: center;
   margin-bottom: 0.85rem;
+  min-width: 0;
 }
 
 .memos-time {
@@ -50,13 +56,16 @@
 
 .memos-content {
   padding-left: 0;
+  min-width: 0;
 }
 
 .memos-body {
   color: var(--font-color);
   line-height: 1.85;
   word-break: break-word;
+  overflow-wrap: anywhere;
   font-size: 1rem;
+  min-width: 0;
 }
 
 .memos-body p {
@@ -77,6 +86,7 @@
 
 .memos-body img {
   max-width: 100%;
+  height: auto;
   border-radius: 8px;
 }
 
@@ -90,9 +100,10 @@
 
 .memos-photos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr));
   gap: 0.5rem;
   margin: 0 0 0.85rem;
+  min-width: 0;
 }
 
 .memos-photos + .memos-body {
@@ -108,6 +119,7 @@
   overflow: hidden;
   border-radius: 8px;
   background: var(--hr-border);
+  min-width: 0;
 }
 
 .memos-photo img {
@@ -122,7 +134,7 @@
 }
 
 .memos-photos--single .memos-photo img {
-  max-height: 480px;
+  max-height: min(480px, 70vh);
   object-fit: contain;
 }
 
@@ -134,6 +146,7 @@
   margin-top: 1.15rem;
   padding-top: 0.85rem;
   border-top: 1px dashed var(--hr-border);
+  min-width: 0;
 }
 
 .memos-comments .comment-head {
@@ -165,10 +178,34 @@
   }
 
   .memos-photos:not(.memos-photos--single) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .memos-photos--single {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .memos-photos:not(.memos-photos--single) .memos-photo img {
+    height: 120px;
+  }
+}
+
+@media (max-width: 420px) {
+  .memos-item {
+    padding: 0.85rem;
+  }
+
+  .memos-photos:not(.memos-photos--single) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .memos-photos:not(.memos-photos--single) .memos-photo img {
+    height: auto;
+    max-height: 240px;
+    object-fit: cover;
+  }
+
+  .memos-body {
+    font-size: 0.95rem;
   }
 }

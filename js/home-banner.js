@@ -35,11 +35,12 @@
 
   var LINE_RATIO = 0.9
   var BOUNDS = {
-    edgeMin: { min: 10, max: 28, ratio: 0.018 },
-    lineGap: { min: 6, max: 36, preferRatio: 0.045 },
-    fortuneGap: { min: 10, max: 40, preferRatio: 0.028 },
-    fortuneSize: { min: 14, max: 42 },
-    fontMin: 14
+    edgeMin: { min: 8, max: 28, ratio: 0.018 },
+    lineGap: { min: 4, max: 36, preferRatio: 0.045 },
+    fortuneGap: { min: 6, max: 40, preferRatio: 0.028 },
+    fortuneSize: { min: 12, max: 42 },
+    fontMin: 14,
+    fontMinMicro: 11
   }
 
   var oceanState = null
@@ -172,12 +173,35 @@
     return max
   }
 
-  function setModuleMetrics (moduleEl, fontSize, lineGap) {
-    moduleEl.style.setProperty('--module-font-size', Math.max(BOUNDS.fontMin, fontSize) + 'px')
+  function layoutFlags (width, height) {
+    // Only stack on truly narrow phones; keep side-by-side so date hugs the right
+    var stacked = width < 420
+    var tight = height < 520
+    var micro = height < 400 || width < 340
+    return { stacked: stacked, tight: tight, micro: micro }
+  }
+
+  function fontFloor (flags) {
+    return flags.micro ? BOUNDS.fontMinMicro : BOUNDS.fontMin
+  }
+
+  function setModuleMetrics (moduleEl, fontSize, lineGap, fontMin) {
+    var min = fontMin == null ? BOUNDS.fontMin : fontMin
+    moduleEl.style.setProperty('--module-font-size', Math.max(min, fontSize) + 'px')
     moduleEl.style.setProperty('--module-line-gap', Math.max(0, lineGap) + 'px')
   }
 
-  function fitEqualHeightModule (moduleEl, config, bandHeight) {
+  function applyModuleScale (moduleEl, scale, origin) {
+    if (scale < 0.995) {
+      moduleEl.style.transform = 'scale(' + scale.toFixed(4) + ')'
+      moduleEl.style.transformOrigin = origin || 'left center'
+    } else {
+      moduleEl.style.transform = ''
+      moduleEl.style.transformOrigin = ''
+    }
+  }
+
+  function fitEqualHeightModule (moduleEl, config, bandHeight, flags) {
     var boxWidth = moduleEl.clientWidth
     var boxHeight = bandHeight || moduleEl.clientHeight
     if (!boxWidth || !boxHeight) return
@@ -185,19 +209,20 @@
     var lines = config.lines
     var n = config.lineCount
     var gaps = Math.max(0, n - 1)
-    var gapMin = BOUNDS.lineGap.min
+    var gapMin = flags && flags.micro ? 2 : BOUNDS.lineGap.min
     var gapMax = BOUNDS.lineGap.max
+    var minFont = fontFloor(flags || {})
 
     var probe = 100
     var natural = maxLineWidthAt(lines, config.fontWeight, probe, config.sizeScale)
     var maxByWidth = natural > 0 ? (boxWidth * probe) / natural : boxWidth
     var maxByHeight = (boxHeight - gaps * gapMin) / (n * LINE_RATIO)
-    var high = Math.max(BOUNDS.fontMin, Math.min(maxByWidth, maxByHeight))
-    var low = BOUNDS.fontMin
+    var high = Math.max(minFont, Math.min(maxByWidth, maxByHeight))
+    var low = minFont
     var bestFont = low
     var bestGap = gapMin
 
-    for (var i = 0; i < 16; i++) {
+    for (var i = 0; i < 18; i++) {
       var mid = (low + high) / 2
       var widthOk = maxLineWidthAt(lines, config.fontWeight, mid, config.sizeScale) <= boxWidth + 0.5
       var gapNeeded = gaps > 0 ? (boxHeight - n * mid * LINE_RATIO) / gaps : gapMin
@@ -212,23 +237,33 @@
 
     var gapAtBest = gaps > 0 ? (boxHeight - n * bestFont * LINE_RATIO) / gaps : gapMin
     bestGap = clamp(gapAtBest, gapMin, gapMax)
-    setModuleMetrics(moduleEl, bestFont, bestGap)
+    setModuleMetrics(moduleEl, bestFont, bestGap, minFont)
+
+    var usedWidth = maxLineWidthAt(lines, config.fontWeight, bestFont, config.sizeScale)
+    var usedHeight = n * bestFont * LINE_RATIO + gaps * bestGap
+    var scale = Math.min(
+      1,
+      usedWidth > 0 ? boxWidth / usedWidth : 1,
+      usedHeight > 0 ? boxHeight / usedHeight : 1
+    )
+    applyModuleScale(moduleEl, scale, config.origin || 'left center')
   }
 
-  function fitFortuneModule (fortuneEl, availableWidth, availableHeight, preferSize) {
+  function fitFortuneModule (fortuneEl, availableWidth, availableHeight, preferSize, flags) {
     var boxWidth = availableWidth || fortuneEl.clientWidth
     var boxHeight = availableHeight || fortuneEl.clientHeight
     if (!boxWidth) return
-    if (!boxHeight || boxHeight < 24) boxHeight = 44
+    if (!boxHeight || boxHeight < 20) boxHeight = flags && flags.micro ? 28 : 44
 
     var text = fortuneEl.textContent || ''
     var probe = 100
     var natural = measureTextWidth(text, '500', probe)
     var maxByWidth = natural > 0 ? (boxWidth * probe) / natural : preferSize
     var maxByHeight = boxHeight / 1.15
+    var minSize = flags && flags.micro ? 11 : BOUNDS.fortuneSize.min
     var size = clamp(
       Math.min(preferSize || 24, maxByWidth, maxByHeight),
-      BOUNDS.fortuneSize.min,
+      minSize,
       BOUNDS.fortuneSize.max
     )
     fortuneEl.style.setProperty('--module-font-size', size + 'px')
@@ -236,17 +271,54 @@
 
   function spacingForViewport (header) {
     var h = header.clientHeight || window.innerHeight || 800
-    var edge = clamp(h * BOUNDS.edgeMin.ratio, BOUNDS.edgeMin.min, BOUNDS.edgeMin.max)
-    var fortuneGap = clamp(h * BOUNDS.fortuneGap.preferRatio, BOUNDS.fortuneGap.min, BOUNDS.fortuneGap.max)
-    var fortuneRow = clamp(h * 0.07, 48, 80)
-    var lineGapPrefer = clamp(h * BOUNDS.lineGap.preferRatio, BOUNDS.lineGap.min, BOUNDS.lineGap.max)
+    var w = header.clientWidth || window.innerWidth || 1200
+    var flags = layoutFlags(w, h)
+
+    header.classList.toggle('kitchas-banner--stacked', flags.stacked)
+    header.classList.toggle('kitchas-banner--tight', flags.tight)
+    header.classList.toggle('kitchas-banner--micro', flags.micro)
+
+    // Horizontal inset for left content; right side stays tight to the page edge
+    var edge = clamp(w * 0.016, BOUNDS.edgeMin.min, 20)
+    if (flags.micro) edge = Math.min(edge, 10)
+    var fortuneGap = clamp(
+      h * (flags.micro ? 0.018 : flags.tight ? 0.024 : BOUNDS.fortuneGap.preferRatio),
+      flags.micro ? 8 : 12,
+      BOUNDS.fortuneGap.max
+    )
+    var fortuneRow = clamp(
+      h * (flags.micro ? 0.05 : flags.tight ? 0.06 : 0.07),
+      flags.micro ? 30 : flags.tight ? 38 : 48,
+      flags.micro ? 48 : 80
+    )
+    var scrollZone = clamp(
+      h * (flags.micro ? 0.05 : flags.tight ? 0.06 : 0.08),
+      flags.micro ? 28 : 40,
+      72
+    )
+    var navClear = clamp(
+      h * (flags.micro ? 0.07 : 0.085),
+      flags.micro ? 36 : 48,
+      68
+    )
+    var lineGapPrefer = clamp(
+      h * BOUNDS.lineGap.preferRatio,
+      flags.micro ? 2 : BOUNDS.lineGap.min,
+      BOUNDS.lineGap.max
+    )
 
     header.style.setProperty('--edge-min', edge + 'px')
     header.style.setProperty('--fortune-gap', fortuneGap + 'px')
     header.style.setProperty('--fortune-row', fortuneRow + 'px')
+    header.style.setProperty('--scroll-zone', scrollZone + 'px')
+    header.style.setProperty('--nav-clear', navClear + 'px')
     header.style.setProperty('--line-gap', lineGapPrefer + 'px')
 
-    return { fortuneGap: fortuneGap, fortuneRow: fortuneRow }
+    return {
+      fortuneGap: fortuneGap,
+      fortuneRow: fortuneRow,
+      flags: flags
+    }
   }
 
   function fitBannerLayout (header) {
@@ -259,28 +331,42 @@
     if (!siteInfo || !stack || !main || !welcome || !date || !fortune) return
 
     var spacing = spacingForViewport(header)
-    var bandHeight = siteInfo.clientHeight
-    if (!bandHeight || !siteInfo.clientWidth) return
+    // Allow stacked/tight class changes to settle before measuring cells
+    void header.offsetHeight
+
+    if (!siteInfo.clientHeight || !siteInfo.clientWidth) return
 
     var monthText = (document.getElementById('kitchas-banner-month') || {}).textContent || '7月'
     var dayText = (document.getElementById('kitchas-banner-day') || {}).textContent || '10日'
+    var welcomeH = welcome.clientHeight || siteInfo.clientHeight
+    var dateH = date.clientHeight || siteInfo.clientHeight
+    var flags = spacing.flags
 
     fitEqualHeightModule(welcome, {
       lines: ['Welcome', 'to', 'Kitchas.cn'],
       fontWeight: '700',
       lineCount: 3,
-      sizeScale: [1, 1, 1.06]
-    }, bandHeight)
+      sizeScale: [1, 1, 1.06],
+      origin: 'left center'
+    }, welcomeH, flags)
 
     fitEqualHeightModule(date, {
       lines: [monthText, dayText],
       fontWeight: '500',
       lineCount: 2,
-      sizeScale: [1, 1]
-    }, bandHeight)
+      sizeScale: [1, 1],
+      origin: 'right center'
+    }, dateH, flags)
 
+    var sidePad = Math.max(24, (parseFloat(getComputedStyle(header).getPropertyValue('--edge-min')) || 12) * 2)
     var fortunePrefer = clamp(spacing.fortuneRow / 1.2, BOUNDS.fortuneSize.min, BOUNDS.fortuneSize.max)
-    fitFortuneModule(fortune, Math.max(120, header.clientWidth - 48), spacing.fortuneRow, fortunePrefer)
+    fitFortuneModule(
+      fortune,
+      Math.max(80, header.clientWidth - sidePad),
+      spacing.fortuneRow,
+      fortunePrefer,
+      flags
+    )
 
     if (!String(fortune.textContent || '').trim()) {
       fortune.textContent = fallbackFortune(getBeijingDate())
@@ -335,6 +421,17 @@
     return ocean
   }
 
+  function ensureStage (layer, id) {
+    var stage = document.getElementById(id)
+    if (!stage) {
+      stage = document.createElement('div')
+      stage.id = id
+      stage.className = 'kitchas-banner__stage'
+    }
+    if (stage.parentElement !== layer) layer.appendChild(stage)
+    return stage
+  }
+
   function ensureTextLayers (header) {
     var dryInfo = document.getElementById('site-info')
     var dryFortune = document.getElementById('kitchas-banner-fortune')
@@ -349,8 +446,6 @@
       dryLayer.className = 'kitchas-banner__layer kitchas-banner__layer--dry'
       header.insertBefore(dryLayer, dryInfo)
     }
-    if (dryInfo.parentElement !== dryLayer) dryLayer.appendChild(dryInfo)
-    if (dryFortune.parentElement !== dryLayer) dryLayer.appendChild(dryFortune)
 
     if (!wetLayer) {
       wetLayer = document.createElement('div')
@@ -359,6 +454,12 @@
       wetLayer.setAttribute('aria-hidden', 'true')
       header.insertBefore(wetLayer, dryLayer.nextSibling)
     }
+
+    var dryStage = ensureStage(dryLayer, 'kitchas-banner-stage-dry')
+    if (dryInfo.parentElement !== dryStage) dryStage.appendChild(dryInfo)
+    if (dryFortune.parentElement !== dryStage) dryStage.appendChild(dryFortune)
+
+    var wetStage = ensureStage(wetLayer, 'kitchas-banner-stage-wet')
 
     var wetInfo = document.getElementById('site-info-wet')
     if (!wetInfo) {
@@ -373,7 +474,7 @@
         nestedIds[i].id = nestedIds[i].id.replace(/-wet$/, '') + '-wet'
       }
     }
-    if (wetInfo.parentElement !== wetLayer) wetLayer.appendChild(wetInfo)
+    if (wetInfo.parentElement !== wetStage) wetStage.appendChild(wetInfo)
 
     var wetFortune = document.getElementById('kitchas-banner-fortune-wet')
     if (!wetFortune) {
@@ -381,7 +482,7 @@
       wetFortune.id = 'kitchas-banner-fortune-wet'
     }
     wetFortune.classList.add('kitchas-banner__wet', 'kitchas-banner__fortune')
-    if (wetFortune.parentElement !== wetLayer) wetLayer.appendChild(wetFortune)
+    if (wetFortune.parentElement !== wetStage) wetStage.appendChild(wetFortune)
 
     // Clear any old per-element clip-paths that caused misalignment
     ;[dryInfo, dryFortune, wetInfo, wetFortune].forEach(function (el) {
@@ -392,6 +493,8 @@
     return {
       dryLayer: dryLayer,
       wetLayer: wetLayer,
+      dryStage: dryStage,
+      wetStage: wetStage,
       dryInfo: dryInfo,
       wetInfo: wetInfo,
       dryFortune: dryFortune,
@@ -418,9 +521,13 @@
 
     if (dryWelcome && wetWelcome) {
       wetWelcome.style.cssText = dryWelcome.style.cssText
+      wetWelcome.style.setProperty('--module-font-size', dryWelcome.style.getPropertyValue('--module-font-size'))
+      wetWelcome.style.setProperty('--module-line-gap', dryWelcome.style.getPropertyValue('--module-line-gap'))
     }
     if (dryDate && wetDate) {
       wetDate.style.cssText = dryDate.style.cssText
+      wetDate.style.setProperty('--module-font-size', dryDate.style.getPropertyValue('--module-font-size'))
+      wetDate.style.setProperty('--module-line-gap', dryDate.style.getPropertyValue('--module-line-gap'))
     }
     clones.wetFortune.style.setProperty(
       '--module-font-size',
@@ -568,12 +675,38 @@
     applyWaveClips(state, points, width, height)
   }
 
+  function applyInitialWaveClips (state) {
+    if (!state || !state.header || !state.clones) return
+    var width = state.header.clientWidth
+    var height = state.header.clientHeight
+    if (!width || !height) return
+
+    var waterline = height * state.waterlineRatio
+    var step = Math.max(5, Math.floor(width / 160))
+    var points = []
+    for (var x = 0; x <= width + step; x += step) {
+      points.push({
+        x: x,
+        y: waterline + waveY(state.layers, x, 0, 1)
+      })
+    }
+    applyWaveClips(state, points, width, height)
+    if (state.clones.wetLayer) {
+      state.clones.wetLayer.style.visibility = 'visible'
+    }
+  }
+
   function startOcean (header, seed, palette) {
     var ocean = ensureOceanCanvas(header)
     if (!ocean) return
 
     var clones = ensureTextLayers(header)
     syncWetClones(clones)
+
+    // Hide wet clone until clip-path is ready — avoids stacked ghost text
+    if (clones && clones.wetLayer) {
+      clones.wetLayer.style.visibility = 'hidden'
+    }
 
     var rng = createRng(seed + 41)
     if (oceanState && oceanState.raf) {
@@ -592,6 +725,8 @@
       startTime: performance.now(),
       raf: 0
     }
+
+    applyInitialWaveClips(oceanState)
 
     function frame (now) {
       drawOceanFrame(oceanState, now)
@@ -634,18 +769,20 @@
     if (!siteInfo) return
 
     var resizeTimer
-    window.addEventListener('resize', function () {
+    function scheduleFit () {
       clearTimeout(resizeTimer)
       resizeTimer = setTimeout(function () {
         if (!header.classList.contains('kitchas-banner')) return
         fitBannerLayout(header)
-      }, 40)
-    })
+      }, 32)
+    }
+
+    window.addEventListener('resize', scheduleFit)
+    window.addEventListener('orientationchange', scheduleFit)
 
     if (typeof ResizeObserver !== 'undefined') {
-      var observer = new ResizeObserver(function () {
-        fitBannerLayout(header)
-      })
+      var observer = new ResizeObserver(scheduleFit)
+      observer.observe(header)
       observer.observe(siteInfo)
     }
   }

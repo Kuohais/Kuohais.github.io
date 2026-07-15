@@ -1,0 +1,308 @@
+/* 每日一抽：海面漂流瓶 */
+#kitchas-daily-draw {
+  position: absolute;
+  right: clamp(0.9rem, 4vw, 2.6rem);
+  bottom: clamp(10px, 2.2vh, 26px);
+  z-index: 24;
+  width: 60px;
+  height: 72px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#kitchas-daily-draw .kitchas-draw__bottle {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 8px rgba(20, 80, 120, 0.35));
+  animation: kitchas-bob 4.5s ease-in-out infinite;
+  transform-origin: 50% 60%;
+}
+
+#kitchas-daily-draw:hover .kitchas-draw__bottle {
+  animation-duration: 2.6s;
+}
+
+/* 提示标签 */
+#kitchas-daily-draw .kitchas-draw__label {
+  position: absolute;
+  left: 50%;
+  top: -1.7rem;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #2f8fd0;
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 8px rgba(20, 80, 120, 0.18);
+  pointer-events: none;
+}
+
+/* 未抽时的水波提示圈 */
+#kitchas-daily-draw.kitchas-draw--pending::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 46px;
+  height: 12px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  animation: kitchas-ripple 2.4s ease-out infinite;
+  pointer-events: none;
+}
+
+/* 瓶边小气泡 */
+#kitchas-daily-draw .kitchas-draw__bubble {
+  position: absolute;
+  bottom: 18px;
+  left: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.65);
+  opacity: 0;
+  animation: kitchas-bubble 3.8s ease-in infinite;
+  pointer-events: none;
+}
+
+#kitchas-daily-draw .kitchas-draw__bubble:nth-child(3) {
+  left: 44px;
+  width: 4px;
+  height: 4px;
+  animation-delay: 1.3s;
+}
+
+#kitchas-daily-draw .kitchas-draw__bubble:nth-child(4) {
+  left: 28px;
+  width: 5px;
+  height: 5px;
+  animation-delay: 2.4s;
+}
+
+/* 点击捞瓶时的摇晃 */
+#kitchas-daily-draw.kitchas-draw--shaking .kitchas-draw__bottle {
+  animation: kitchas-shake 0.75s ease-in-out 1;
+}
+
+@keyframes kitchas-bob {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-8px) rotate(5deg); }
+}
+
+@keyframes kitchas-shake {
+  0% { transform: translateY(0) rotate(-4deg); }
+  20% { transform: translateY(-10px) rotate(14deg); }
+  40% { transform: translateY(-14px) rotate(-12deg); }
+  60% { transform: translateY(-16px) rotate(10deg); }
+  80% { transform: translateY(-12px) rotate(-8deg); }
+  100% { transform: translateY(-6px) rotate(0deg); }
+}
+
+@keyframes kitchas-ripple {
+  0% { opacity: 0.9; transform: translateX(-50%) scale(0.55); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.5); }
+}
+
+@keyframes kitchas-bubble {
+  0% { opacity: 0; transform: translateY(0) scale(0.6); }
+  15% { opacity: 0.9; }
+  100% { opacity: 0; transform: translateY(-46px) scale(1.15); }
+}
+
+/* ---------- 抽签结果弹层 ---------- */
+#kitchas-draw-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(10, 38, 58, 0.52);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  overflow: hidden;
+}
+
+#kitchas-draw-overlay.kitchas-draw-overlay--show {
+  opacity: 1;
+}
+
+/* 上浮气泡（JS 生成） */
+#kitchas-draw-overlay .kitchas-draw-rise {
+  position: absolute;
+  bottom: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.75), rgba(160, 215, 245, 0.25));
+  animation: kitchas-rise linear forwards;
+  pointer-events: none;
+}
+
+@keyframes kitchas-rise {
+  to { transform: translateY(-115vh); opacity: 0; }
+}
+
+.kitchas-draw-card {
+  position: relative;
+  width: min(88vw, 340px);
+  padding: 1.55rem 1.4rem 1.25rem;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #f4faff 100%);
+  box-shadow: 0 18px 48px rgba(8, 40, 66, 0.4);
+  text-align: center;
+  overflow: hidden;
+  animation: kitchas-pop 0.45s cubic-bezier(0.24, 1.36, 0.5, 1) both;
+}
+
+/* 顶部浪纹装饰 */
+.kitchas-draw-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #49b1f5 0 10px,
+    #9fd4f2 10px 20px
+  );
+}
+
+@keyframes kitchas-pop {
+  0% { opacity: 0; transform: translateY(36px) scale(0.6); }
+  70% { opacity: 1; transform: translateY(-4px) scale(1.03); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.kitchas-draw-card > * {
+  animation: kitchas-fade-up 0.4s ease both;
+}
+
+.kitchas-draw-card > *:nth-child(2) { animation-delay: 0.12s; }
+.kitchas-draw-card > *:nth-child(3) { animation-delay: 0.2s; }
+.kitchas-draw-card > *:nth-child(4) { animation-delay: 0.28s; }
+.kitchas-draw-card > *:nth-child(5) { animation-delay: 0.36s; }
+.kitchas-draw-card > *:nth-child(6) { animation-delay: 0.44s; }
+.kitchas-draw-card > *:nth-child(7) { animation-delay: 0.5s; }
+
+@keyframes kitchas-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.kitchas-draw-card__close {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.6rem;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #9aa9b5;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  animation: none !important;
+}
+
+.kitchas-draw-card__close:hover {
+  color: #49b1f5;
+}
+
+.kitchas-draw-card__kicker {
+  color: #7d8f9c;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+
+.kitchas-draw-card__level {
+  margin: 0.55rem 0 0.2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-indent: 0.25em;
+  line-height: 1.2;
+}
+
+.kitchas-draw-card__poem {
+  margin: 0.35rem 0 0.9rem;
+  color: #4c4948;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.kitchas-draw-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.4rem 0;
+}
+
+.kitchas-draw-card__tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.kitchas-draw-card__row--yi .kitchas-draw-card__tag { background: #49b1f5; }
+.kitchas-draw-card__row--ji .kitchas-draw-card__tag { background: #ff8a65; }
+
+.kitchas-draw-card__chip {
+  padding: 0.18rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: #40606f;
+}
+
+.kitchas-draw-card__row--yi .kitchas-draw-card__chip { background: rgba(73, 177, 245, 0.13); }
+.kitchas-draw-card__row--ji .kitchas-draw-card__chip { background: rgba(255, 138, 101, 0.14); }
+
+.kitchas-draw-card__foot {
+  margin-top: 0.9rem;
+  color: #9aa9b5;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+}
+
+@media screen and (max-width: 480px) {
+  #kitchas-daily-draw {
+    width: 50px;
+    height: 60px;
+  }
+
+  #kitchas-daily-draw .kitchas-draw__label {
+    font-size: 11px;
+    top: -1.55rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #kitchas-daily-draw .kitchas-draw__bottle,
+  #kitchas-daily-draw .kitchas-draw__bubble,
+  #kitchas-daily-draw.kitchas-draw--pending::after,
+  #kitchas-draw-overlay .kitchas-draw-rise,
+  .kitchas-draw-card,
+  .kitchas-draw-card > * {
+    animation: none !important;
+  }
+}

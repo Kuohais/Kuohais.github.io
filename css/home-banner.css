@@ -8,12 +8,21 @@
   --fortune-gap: 0.75rem;
   --fortune-row: 3.25rem;
   --scroll-zone: 4rem;
+  --nav-clear: 3.5rem;
   background-image: none !important;
   background-color: var(--kitchas-banner-bg);
   background-attachment: scroll;
   color: var(--kitchas-banner-text);
   position: relative;
   overflow: hidden;
+}
+
+/* Prefer dynamic viewport units on mobile browsers */
+#page-header.kitchas-banner.full_page {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100svh;
+  background-attachment: scroll !important;
 }
 
 #page-header.kitchas-banner::before,
@@ -44,21 +53,69 @@
   pointer-events: none;
 }
 
-#page-header.kitchas-banner.full_page #site-info,
-#page-header.kitchas-banner.full_page #site-info-wet {
+#page-header.kitchas-banner.full_page > #site-info {
   position: absolute !important;
-  top: 3.5rem !important;
+  top: max(var(--nav-clear), env(safe-area-inset-top, 0px)) !important;
   right: 0 !important;
-  bottom: calc(var(--scroll-zone) + var(--fortune-row) + var(--fortune-gap)) !important;
+  bottom: calc(var(--scroll-zone) + var(--fortune-row) + var(--fortune-gap) + env(safe-area-inset-bottom, 0px)) !important;
   left: 0 !important;
   width: 100% !important;
   max-width: none !important;
-  padding: max(0.75rem, var(--edge-min)) clamp(0.75rem, 2.8vw, 2rem) 0 !important;
+  padding:
+    max(0.5rem, var(--edge-min))
+    max(0.5rem, env(safe-area-inset-right, 0px))
+    0
+    max(0.75rem, calc(var(--edge-min) + env(safe-area-inset-left, 0px))) !important;
   transform: none !important;
   z-index: 1;
   display: block !important;
   overflow: hidden;
   box-sizing: border-box;
+  min-height: 0;
+}
+
+/* Stage keeps Chinese in document flow under English/date — no absolute overlap */
+.kitchas-banner__stage {
+  position: absolute;
+  top: max(var(--nav-clear), env(safe-area-inset-top, 0px));
+  right: 0;
+  bottom: calc(var(--scroll-zone) + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  padding:
+    max(0.35rem, calc(var(--edge-min) * 0.5))
+    max(0.5rem, env(safe-area-inset-right, 0px))
+    0
+    max(0.75rem, calc(var(--edge-min) + env(safe-area-inset-left, 0px)));
+  box-sizing: border-box;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.kitchas-banner__stage #site-info,
+.kitchas-banner__stage #site-info-wet {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: auto !important;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0 !important;
+  margin: 0 !important;
+  transform: none !important;
+  z-index: 1;
+  display: block !important;
+  overflow: hidden;
+  box-sizing: border-box;
+  pointer-events: auto;
 }
 
 .kitchas-banner__content {
@@ -66,6 +123,7 @@
   width: 100%;
   height: 100%;
   min-height: 0;
+  min-width: 0;
   box-sizing: border-box;
 }
 
@@ -73,16 +131,18 @@
   width: 100%;
   height: 100%;
   min-height: 0;
+  min-width: 0;
 }
 
 .kitchas-banner__main {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
   align-items: stretch;
-  column-gap: clamp(0.5rem, 1.5vw, 1.25rem);
+  column-gap: clamp(0.35rem, 1.5vw, 1.25rem);
   width: 100%;
   height: 100%;
   min-height: 0;
+  min-width: 0;
   overflow: hidden;
 }
 
@@ -99,6 +159,7 @@
   align-items: flex-start;
   gap: var(--module-line-gap);
   height: 100%;
+  width: 100%;
   margin: 0;
   line-height: 0.9;
   text-align: left;
@@ -106,12 +167,14 @@
 
 .kitchas-banner__welcome-line {
   display: block;
+  max-width: 100%;
   font-weight: 700;
   font-size: var(--module-font-size);
   letter-spacing: -0.03em;
   color: var(--kitchas-banner-text);
   white-space: nowrap;
   line-height: 0.9;
+  overflow: hidden;
 }
 
 .kitchas-banner__welcome-line--domain {
@@ -131,6 +194,7 @@
   align-items: flex-end;
   gap: var(--module-line-gap);
   height: 100%;
+  width: 100%;
   line-height: 0.9;
   text-align: right;
 }
@@ -138,30 +202,34 @@
 .kitchas-banner__month,
 .kitchas-banner__day {
   display: block;
+  max-width: 100%;
   font-size: var(--module-font-size);
   font-weight: 500;
   color: var(--kitchas-banner-text);
   letter-spacing: 0.01em;
   white-space: nowrap;
   line-height: 0.9;
+  overflow: hidden;
 }
 
 #page-header.kitchas-banner > .kitchas-banner__fortune,
 #page-header.kitchas-banner #kitchas-banner-fortune,
 #page-header.kitchas-banner #kitchas-banner-fortune-wet,
-.kitchas-banner__layer .kitchas-banner__fortune {
+.kitchas-banner__layer .kitchas-banner__fortune,
+.kitchas-banner__stage .kitchas-banner__fortune {
   --module-font-size: 1.5rem;
-  position: absolute !important;
-  left: clamp(0.75rem, 2.8vw, 2rem) !important;
-  right: clamp(0.75rem, 2.8vw, 2rem) !important;
-  bottom: var(--scroll-zone) !important;
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
   top: auto !important;
-  width: auto !important;
-  max-width: calc(100% - 2 * clamp(0.75rem, 2.8vw, 2rem)) !important;
+  bottom: auto !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  max-width: none !important;
   height: var(--fortune-row) !important;
-  min-height: 2.75rem !important;
+  min-height: 0 !important;
   max-height: var(--fortune-row) !important;
-  margin: 0 !important;
+  margin: var(--fortune-gap) 0 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
@@ -181,6 +249,16 @@
   z-index: 2 !important;
   pointer-events: none;
   transform: none !important;
+}
+
+/* Before JS wraps content, keep fortune pinned under the scroll zone */
+#page-header.kitchas-banner > .kitchas-banner__fortune {
+  position: absolute !important;
+  left: max(0.75rem, calc(var(--edge-min) + env(safe-area-inset-left, 0px))) !important;
+  right: max(0.5rem, env(safe-area-inset-right, 0px)) !important;
+  bottom: calc(var(--scroll-zone) + env(safe-area-inset-bottom, 0px)) !important;
+  margin: 0 !important;
+  width: auto !important;
 }
 
 #page-header.kitchas-banner #kitchas-banner-fortune-wet {
@@ -216,7 +294,7 @@
 
 #page-header.kitchas-banner #scroll-down {
   z-index: 22;
-  height: var(--scroll-zone);
+  height: calc(var(--scroll-zone) + env(safe-area-inset-bottom, 0px));
   cursor: pointer;
 }
 
@@ -244,20 +322,39 @@
   z-index: 25;
 }
 
+/* Narrow / short viewports: stack welcome above date; date stays right-aligned */
+#page-header.kitchas-banner.kitchas-banner--stacked .kitchas-banner__main {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1.25fr) minmax(0, 0.9fr);
+  row-gap: clamp(0.25rem, 1.2vh, 0.75rem);
+  column-gap: 0;
+}
+
+#page-header.kitchas-banner.kitchas-banner--stacked .kitchas-banner__date {
+  align-items: flex-end;
+  text-align: right;
+  justify-content: center;
+}
+
+#page-header.kitchas-banner.kitchas-banner--micro .kitchas-banner__welcome-line,
+#page-header.kitchas-banner.kitchas-banner--micro .kitchas-banner__month,
+#page-header.kitchas-banner.kitchas-banner--micro .kitchas-banner__day {
+  letter-spacing: -0.04em;
+}
+
 @media screen and (max-height: 520px) and (orientation: landscape) {
   #page-header.kitchas-banner {
-    --scroll-zone: 3.25rem;
-    --fortune-row: 2.25rem;
+    --scroll-zone: 2.5rem;
+    --fortune-row: 2rem;
+    --nav-clear: 2.75rem;
+    --fortune-gap: 0.35rem;
   }
+}
 
+@media screen and (max-width: 360px) {
   #page-header.kitchas-banner.full_page #site-info,
   #page-header.kitchas-banner.full_page #site-info-wet {
-    top: 3rem !important;
-  }
-
-  #page-header.kitchas-banner > .kitchas-banner__fortune,
-  #page-header.kitchas-banner #kitchas-banner-fortune,
-  #page-header.kitchas-banner #kitchas-banner-fortune-wet {
-    min-height: 2rem !important;
+    padding-left: max(0.5rem, env(safe-area-inset-left, 0px)) !important;
+    padding-right: max(0.5rem, env(safe-area-inset-right, 0px)) !important;
   }
 }
