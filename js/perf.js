@@ -100,8 +100,127 @@
     }
   }
 
+  /* 代码块：Mac 圆点 + 语言标签 + 复制按钮 */
+  function enhanceCodeBlocks () {
+    var figures = document.querySelectorAll('#article-container figure.highlight')
+    figures.forEach(function (figure) {
+      if (figure.querySelector('.kitchas-code-header')) return
+
+      var lang = ''
+      figure.classList.forEach(function (cls) {
+        if (cls !== 'highlight') lang = cls
+      })
+      if (lang === 'plain' || lang === 'plaintext') lang = 'text'
+
+      var header = document.createElement('div')
+      header.className = 'kitchas-code-header'
+      header.innerHTML =
+        '<span class="kitchas-code-dots"><i></i><i></i><i></i></span>' +
+        '<span class="kitchas-code-lang">' + lang + '</span>' +
+        '<button class="kitchas-code-copy" type="button" aria-label="复制代码">复制</button>'
+      figure.insertBefore(header, figure.firstChild)
+
+      header.querySelector('.kitchas-code-copy').addEventListener('click', function () {
+        var btn = this
+        var code = figure.querySelector('td.code pre') || figure.querySelector('pre')
+        if (!code) return
+        var text = code.innerText.replace(/\n$/, '')
+
+        function done (ok) {
+          btn.textContent = ok ? '已复制' : '失败'
+          btn.classList.toggle('kitchas-code-copy--ok', ok)
+          setTimeout(function () {
+            btn.textContent = '复制'
+            btn.classList.remove('kitchas-code-copy--ok')
+          }, 1600)
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { done(true) }, function () { done(false) })
+        } else {
+          var ta = document.createElement('textarea')
+          ta.value = text
+          document.body.appendChild(ta)
+          ta.select()
+          try { done(document.execCommand('copy')) } catch (e) { done(false) }
+          ta.remove()
+        }
+      })
+    })
+  }
+
+  /* 文章页：潜水深度阅读进度 */
+  function initDepthMeter () {
+    if (!document.querySelector('#post #article-container')) return
+    if (document.getElementById('kitchas-depth')) return
+
+    var pill = document.createElement('div')
+    pill.id = 'kitchas-depth'
+    pill.setAttribute('aria-hidden', 'true')
+    pill.innerHTML = '<span class="kitchas-depth__icon">🌊</span><span id="kitchas-depth-text">-0m</span>'
+    document.body.appendChild(pill)
+
+    var textEl = pill.querySelector('#kitchas-depth-text')
+    var ticking = false
+
+    function update () {
+      ticking = false
+      var doc = document.documentElement
+      var total = doc.scrollHeight - window.innerHeight
+      if (total <= 0) return
+      var progress = Math.min(1, Math.max(0, (window.scrollY || doc.scrollTop) / total))
+      // 海底深度随文章长度变化：越长潜得越深
+      var seabed = Math.max(20, Math.round(doc.scrollHeight / 60))
+
+      if (progress <= 0.02) {
+        pill.classList.remove('kitchas-depth--show')
+        return
+      }
+      pill.classList.add('kitchas-depth--show')
+      if (progress >= 0.985) {
+        pill.firstChild.textContent = '⚓'
+        textEl.textContent = '已至海底 -' + seabed + 'm'
+      } else {
+        pill.firstChild.textContent = '🌊'
+        textEl.textContent = '-' + Math.round(progress * seabed) + 'm'
+      }
+    }
+
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(update)
+      }
+    }, { passive: true })
+    update()
+  }
+
+  /* 伪终端彩蛋：按 ` 呼出，脚本按需加载 */
+  function bindTerminalHotkey () {
+    var loading = false
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== '`' || e.ctrlKey || e.altKey || e.metaKey) return
+      var target = e.target
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return
+      e.preventDefault()
+
+      if (window.KitchasTerminal) {
+        window.KitchasTerminal.toggle()
+        return
+      }
+      if (loading) return
+      loading = true
+      loadScript('/js/site-terminal.js').then(function () {
+        if (window.KitchasTerminal) window.KitchasTerminal.toggle()
+      }).catch(function () { loading = false })
+    })
+  }
+
   enableNativeLazyLoad()
   bindOptionalFeatures()
+  enhanceCodeBlocks()
+  initDepthMeter()
+  bindTerminalHotkey()
 
   window.addEventListener('load', function () {
     defer(function () {

@@ -28,6 +28,25 @@
     }
   ]
 
+  var NIGHT_PALETTES = [
+    {
+      sky: '#0e1c29', skyDeep: '#132a3c',
+      waterTop: '#1d4c6d', waterMid: '#1a6091', waterDeep: '#14486b',
+      foam: 'rgba(190, 225, 248, 0.4)',
+      textDry: '#cfdae2', textWet: '#eaf6ff'
+    },
+    {
+      sky: '#0c1a26', skyDeep: '#122839',
+      waterTop: '#1b4866', waterMid: '#1a5c8a', waterDeep: '#123f5e',
+      foam: 'rgba(180, 220, 245, 0.38)',
+      textDry: '#cdd8e0', textWet: '#ebf7ff'
+    }
+  ]
+
+  function isDarkTheme () {
+    return document.documentElement.getAttribute('data-theme') === 'dark'
+  }
+
   var GAN_WUXING = {
     甲: '木', 乙: '木', 丙: '火', 丁: '火', 戊: '土',
     己: '土', 庚: '金', 辛: '金', 壬: '水', 癸: '水'
@@ -578,6 +597,118 @@
     return dpr
   }
 
+  /* 海面涟漪：指针划过水面时留下扩散的圈 */
+  function bindWaterPointer (state) {
+    var header = state.header
+    if (header.dataset.kitchasRipple === '1') return
+    header.dataset.kitchasRipple = '1'
+
+    var lastX = -999
+    var lastY = -999
+    var lastT = 0
+
+    function addRipple (x, y, big) {
+      if (!oceanState) return
+      var height = header.clientHeight
+      if (y < height * oceanState.waterlineRatio) return
+      oceanState.ripples.push({
+        x: x,
+        y: y,
+        born: performance.now(),
+        life: big ? 1600 : 1100,
+        maxR: big ? 40 + Math.random() * 20 : 18 + Math.random() * 14
+      })
+      if (oceanState.ripples.length > 24) oceanState.ripples.shift()
+    }
+
+    header.addEventListener('pointermove', function (e) {
+      var now = performance.now()
+      var rect = header.getBoundingClientRect()
+      var x = e.clientX - rect.left
+      var y = e.clientY - rect.top
+      var dx = x - lastX
+      var dy = y - lastY
+      if (now - lastT < 90 || dx * dx + dy * dy < 900) return
+      lastX = x
+      lastY = y
+      lastT = now
+      addRipple(x, y, false)
+    }, { passive: true })
+
+    header.addEventListener('pointerdown', function (e) {
+      var rect = header.getBoundingClientRect()
+      addRipple(e.clientX - rect.left, e.clientY - rect.top, true)
+    }, { passive: true })
+  }
+
+  function drawRipples (state, octx, now) {
+    var ripples = state.ripples
+    if (!ripples || !ripples.length) return
+    for (var i = ripples.length - 1; i >= 0; i--) {
+      var r = ripples[i]
+      var t = (now - r.born) / r.life
+      if (t >= 1) {
+        ripples.splice(i, 1)
+        continue
+      }
+      var ease = 1 - Math.pow(1 - t, 2)
+      octx.beginPath()
+      octx.ellipse(r.x, r.y, 4 + ease * r.maxR, (4 + ease * r.maxR) * 0.45, 0, 0, Math.PI * 2)
+      octx.strokeStyle = 'rgba(255, 255, 255, ' + ((1 - t) * 0.42).toFixed(3) + ')'
+      octx.lineWidth = 1.4
+      octx.stroke()
+    }
+  }
+
+  /* 偶尔游过的小鱼剪影 */
+  function drawFish (state, octx, now, width, height, waterline) {
+    if (!state.fish && now >= state.nextFishAt) {
+      var rng = Math.random
+      var dir = rng() < 0.5 ? 1 : -1
+      var depthSpan = Math.max(40, height - waterline - 50)
+      state.fish = {
+        dir: dir,
+        startX: dir === 1 ? -70 : width + 70,
+        y0: waterline + 34 + rng() * depthSpan * 0.6,
+        speed: 36 + rng() * 34,
+        size: 11 + rng() * 8,
+        phase: rng() * Math.PI * 2,
+        born: now
+      }
+    }
+    var fish = state.fish
+    if (!fish) return
+
+    var elapsed = (now - fish.born) / 1000
+    var x = fish.startX + fish.dir * fish.speed * elapsed
+    if ((fish.dir === 1 && x > width + 80) || (fish.dir === -1 && x < -80)) {
+      state.fish = null
+      state.nextFishAt = now + 14000 + Math.random() * 22000
+      return
+    }
+    var y = fish.y0 + Math.sin(elapsed * 2.2 + fish.phase) * 7
+    var s = fish.size
+    var color = isDarkTheme() ? 'rgba(215, 238, 252, 0.3)' : 'rgba(8, 42, 64, 0.3)'
+
+    octx.save()
+    octx.translate(x, y)
+    octx.scale(fish.dir, 1)
+    octx.fillStyle = color
+    // 鱼身
+    octx.beginPath()
+    octx.ellipse(0, 0, s, s * 0.42, 0, 0, Math.PI * 2)
+    octx.fill()
+    // 尾鳍（随游动摆动）
+    var flick = Math.sin(elapsed * 9 + fish.phase) * s * 0.22
+    octx.beginPath()
+    octx.moveTo(-s * 0.85, 0)
+    octx.lineTo(-s * 1.55, -s * 0.5 + flick)
+    octx.lineTo(-s * 1.55, s * 0.5 + flick)
+    octx.closePath()
+    octx.fill()
+    octx.restore()
+  }
+
   function drawOceanFrame (state, now) {
     if (!state || !state.ocean) return
 
@@ -669,6 +800,10 @@
       }
       octx.stroke()
     }
+    octx.globalAlpha = 1
+
+    drawRipples(state, octx, now)
+    drawFish(state, octx, now, width, height, waterline)
     octx.restore()
 
     // Split dry/wet text colors by wave clip-paths
@@ -723,16 +858,38 @@
       ampBoost: 1,
       lastScrollY: window.scrollY || 0,
       startTime: performance.now(),
+      ripples: [],
+      fish: null,
+      nextFishAt: performance.now() + 6000 + rng() * 12000,
       raf: 0
     }
 
     applyInitialWaveClips(oceanState)
+    bindWaterPointer(oceanState)
 
     function frame (now) {
       drawOceanFrame(oceanState, now)
       oceanState.raf = window.requestAnimationFrame(frame)
     }
     oceanState.raf = window.requestAnimationFrame(frame)
+  }
+
+  function paletteForTheme (seed) {
+    var pool = isDarkTheme() ? NIGHT_PALETTES : OCEAN_PALETTES
+    return pool[seed % pool.length]
+  }
+
+  // 明暗主题切换时，海洋换成对应的昼/夜配色
+  var themeObserved = false
+  function observeThemeChange (header, seed) {
+    if (themeObserved || typeof MutationObserver === 'undefined') return
+    themeObserved = true
+    new MutationObserver(function () {
+      if (!header.classList.contains('kitchas-banner')) return
+      var palette = paletteForTheme(seed)
+      applyOceanTheme(header, palette)
+      if (oceanState) oceanState.palette = palette
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
   }
 
   var LUNAR_SRC = '/js/vendor/lunar.min.js'
@@ -777,11 +934,12 @@
 
     var date = getBeijingDate()
     var seed = hashSeed(dateKey(date))
-    var palette = OCEAN_PALETTES[seed % OCEAN_PALETTES.length]
+    var palette = paletteForTheme(seed)
 
     header.classList.add('kitchas-banner--ocean')
     header.classList.remove('kitchas-banner--paper', 'kitchas-banner--coast')
     applyOceanTheme(header, palette)
+    observeThemeChange(header, seed)
 
     monthEl.textContent = formatSolarMonth(date)
     dayEl.textContent = formatSolarDay(date)

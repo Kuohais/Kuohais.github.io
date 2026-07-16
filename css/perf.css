@@ -1,3 +1,7 @@
+:root {
+  --kitchas-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', 'Fira Code', Consolas, 'Courier New', monospace;
+}
+
 .card-widget,
 .recent-post-item:not(:first-child) {
   content-visibility: auto;
@@ -361,4 +365,382 @@
     padding: 0.28rem 0.55rem;
     font-size: 0.8rem;
   }
+}
+
+/* ---------- 主页游戏入口 ---------- */
+.home-games {
+  width: 100%;
+  margin-top: 0.6rem;
+}
+
+.home-games__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.3rem 0.2rem 0.7rem;
+}
+
+.home-games__title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--font-color);
+}
+
+.home-games__more {
+  padding: 0.32rem 0.7rem;
+  border: 1px solid rgba(73, 177, 245, 0.45);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: #49b1f5 !important;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.home-games__more:hover {
+  background: #49b1f5;
+  color: #fff !important;
+}
+
+.home-games__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 0.7rem;
+}
+
+.home-games__card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: var(--card-bg, #fff);
+  border: 1px solid rgba(73, 177, 245, 0.18);
+  color: var(--font-color) !important;
+  box-shadow: 0 4px 12px rgba(60, 90, 120, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.home-games__card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(60, 90, 120, 0.2);
+}
+
+[data-theme='dark'] .home-games__card {
+  background: linear-gradient(150deg, #11374f 0%, #0b2438 70%);
+  border-color: rgba(120, 195, 250, 0.2);
+  color: #dcecf7 !important;
+  box-shadow: 0 4px 14px rgba(0, 10, 20, 0.35);
+}
+
+[data-theme='dark'] .home-games__card:hover {
+  box-shadow: 0 10px 24px rgba(0, 10, 20, 0.5);
+}
+
+.home-games__emoji {
+  font-size: 1.7rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.home-games__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.home-games__info b {
+  font-size: 0.98rem;
+  color: var(--font-color);
+}
+
+.home-games__info small {
+  font-size: 0.75rem;
+  color: #7d8f9c;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-theme='dark'] .home-games__info b {
+  color: #fff;
+}
+
+[data-theme='dark'] .home-games__info small {
+  color: #9dc4dd;
+}
+
+.home-games__go {
+  margin-left: auto;
+  flex-shrink: 0;
+  padding: 0.24rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(73, 177, 245, 0.12);
+  border: 1px solid rgba(73, 177, 245, 0.4);
+  font-family: var(--kitchas-mono);
+  font-size: 0.72rem;
+  color: #2a8bd0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+[data-theme='dark'] .home-games__go {
+  background: rgba(73, 177, 245, 0.2);
+  border-color: rgba(120, 195, 250, 0.45);
+  color: #8fd0ff;
+}
+
+.home-games__card:hover .home-games__go {
+  background: #49b1f5;
+  color: #04121e;
+}
+
+@media screen and (max-width: 768px) {
+  .home-games__title {
+    font-size: 1.1rem;
+  }
+}
+
+/* ---------- 等宽字体点缀：日期 / 统计 / 标签计数 ---------- */
+time,
+.post-meta-date,
+.article-meta-wrap,
+.memos-time,
+.webinfo .item-count,
+.card-archive-list-count,
+.card-info-data .length-num,
+.home-latest-card__author,
+#runtimeshow,
+#busuanzi_value_site_uv,
+#busuanzi_value_site_pv,
+#last-push-date {
+  font-family: var(--kitchas-mono);
+  font-size: 0.92em;
+  letter-spacing: 0;
+}
+
+/* ---------- 代码块升级：Mac 圆点 + 语言标签 + 复制按钮 ---------- */
+#article-container figure.highlight {
+  position: relative;
+  margin: 1.1rem 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(30, 60, 90, 0.1);
+}
+
+.kitchas-code-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.2rem;
+  padding: 0 0.55rem 0 0.9rem;
+  background: #e8eef4;
+  border-bottom: 1px solid rgba(90, 130, 160, 0.14);
+  user-select: none;
+}
+
+[data-theme='dark'] .kitchas-code-header {
+  background: #21262d;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.kitchas-code-dots {
+  display: inline-flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.kitchas-code-dots i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+
+.kitchas-code-dots i:nth-child(1) { background: #ff5f57; }
+.kitchas-code-dots i:nth-child(2) { background: #febc2e; }
+.kitchas-code-dots i:nth-child(3) { background: #28c840; }
+
+.kitchas-code-lang {
+  margin-left: auto;
+  font-family: var(--kitchas-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7d8f9c;
+}
+
+[data-theme='dark'] .kitchas-code-lang {
+  color: #8b949e;
+}
+
+.kitchas-code-copy {
+  flex-shrink: 0;
+  padding: 0.22rem 0.6rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #7d8f9c;
+  font-family: var(--kitchas-mono);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.kitchas-code-copy:hover {
+  color: #49b1f5;
+  background: rgba(73, 177, 245, 0.12);
+}
+
+.kitchas-code-copy.kitchas-code-copy--ok {
+  color: #28c840;
+}
+
+[data-theme='dark'] .kitchas-code-copy {
+  color: #8b949e;
+}
+
+/* ---------- 潜水深度阅读进度 ---------- */
+#kitchas-depth {
+  position: fixed;
+  left: 1rem;
+  bottom: 1.1rem;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(20, 60, 90, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #d8ecfa;
+  font-family: var(--kitchas-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#kitchas-depth.kitchas-depth--show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#kitchas-depth .kitchas-depth__icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+@media screen and (max-width: 768px) {
+  #kitchas-depth {
+    left: 0.6rem;
+    bottom: 0.7rem;
+    font-size: 0.72rem;
+  }
+}
+
+/* ---------- git log 风格建站日志 ---------- */
+.kitchas-gitlog-title {
+  margin: 2rem 0 0.8rem !important;
+  font-family: var(--kitchas-mono);
+  font-size: 1.05rem !important;
+  color: var(--font-color);
+  opacity: 0.9;
+}
+
+.kitchas-gitlog-title::before {
+  content: '$ ';
+  color: #49b1f5;
+}
+
+.kitchas-gitlog {
+  position: relative;
+  margin: 0 0 1rem;
+  padding-left: 1.15rem;
+  border-left: 2px solid rgba(73, 177, 245, 0.35);
+}
+
+.kitchas-gitlog__item {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 0.6rem;
+  padding: 0.32rem 0.5rem;
+  border-radius: 6px;
+  line-height: 1.55;
+  transition: background-color 0.2s ease;
+}
+
+.kitchas-gitlog__item:hover {
+  background: rgba(73, 177, 245, 0.08);
+}
+
+.kitchas-gitlog__item::before {
+  content: '';
+  position: absolute;
+  left: -1.15rem;
+  top: 0.85em;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--card-bg, #fff);
+  border: 2px solid #49b1f5;
+  transform: translateX(-56%);
+  box-sizing: border-box;
+}
+
+.kitchas-gitlog__hash {
+  font-family: var(--kitchas-mono);
+  font-size: 0.82rem;
+  color: #e6a23c;
+  flex-shrink: 0;
+}
+
+.kitchas-gitlog__date {
+  font-family: var(--kitchas-mono);
+  font-size: 0.78rem;
+  color: #7d8f9c;
+  flex-shrink: 0;
+}
+
+.kitchas-gitlog__msg {
+  font-size: 0.9rem;
+  color: var(--font-color);
+  min-width: 0;
+}
+
+/* ---------- 统一微交互 ---------- */
+.memos-item:hover {
+  transform: translateY(-2px);
+}
+
+.card-widget,
+.memos-item,
+#recent-posts > .recent-post-item {
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+/* ---------- 暗色模式补齐（自定义组件） ---------- */
+[data-theme='dark'] .kitchas-draw-card {
+  background: linear-gradient(180deg, #222e38 0%, #1b262f 100%);
+}
+
+[data-theme='dark'] .kitchas-draw-card__poem {
+  color: #cdd6dd;
+}
+
+[data-theme='dark'] .kitchas-draw-card__chip {
+  color: #b8c7d1;
+}
+
+[data-theme='dark'] #recent-posts.home-latest > .home-latest__header .home-latest__more {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme='dark'] #footer-wrap .footer-icon {
+  opacity: 0.85;
 }
