@@ -500,6 +500,156 @@
   }
 }
 
+/* ---------- 主页一番赏入口 ---------- */
+.home-kuji {
+  width: 100%;
+  margin-top: 0.7rem;
+}
+
+.home-kuji__card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 1.1rem 0.9rem 1.5rem;
+  border-radius: 14px;
+  background: #fff8ec;
+  border: 2px solid #f0dfc8;
+  color: #6b5b4e !important;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(150, 110, 60, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.home-kuji__card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(150, 110, 60, 0.2);
+}
+
+.home-kuji__stripes {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  background: repeating-linear-gradient(180deg, #e88989 0 14px, #fff4e4 14px 28px);
+  border-right: 2px solid #f0dfc8;
+}
+
+.home-kuji__emoji {
+  font-size: 1.9rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 3px rgba(150, 110, 60, 0.2));
+}
+
+.home-kuji__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.home-kuji__info b {
+  font-size: 1rem;
+  color: #6b5b4e;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.home-kuji__badge {
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: #e88989;
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.home-kuji__info small {
+  font-size: 0.75rem;
+  color: #a08c7a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-kuji__grades {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.home-kuji__grades i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 26px;
+  border-radius: 5px;
+  background: #fffdf7;
+  border: 1.5px solid #e8d9c0;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 0.72rem;
+}
+
+.home-kuji__grades i:nth-child(1) { color: #d96c6c; border-color: #e88989; transform: rotate(-6deg); }
+.home-kuji__grades i:nth-child(2) { color: #d98a3d; border-color: #eda963; transform: rotate(4deg); }
+.home-kuji__grades i:nth-child(3) { color: #b39a2e; border-color: #d9bd4f; transform: rotate(-3deg); }
+.home-kuji__grades i:nth-child(4) { color: #a08c7a; transform: rotate(5deg); }
+
+.home-kuji__go {
+  flex-shrink: 0;
+  padding: 0.32rem 0.85rem;
+  border-radius: 999px;
+  background: #e88989;
+  border: 2px solid #d96c6c;
+  box-shadow: 0 2px 0 #d96c6c;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: transform 0.2s ease;
+}
+
+.home-kuji__card:hover .home-kuji__go {
+  transform: translateY(-1px) rotate(-2deg);
+}
+
+[data-theme='dark'] .home-kuji__card {
+  background: #2b2520;
+  border-color: #453a30;
+  color: #d8cdc2 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme='dark'] .home-kuji__info b {
+  color: #e8ddd2;
+}
+
+[data-theme='dark'] .home-kuji__info small {
+  color: #9c8d7d;
+}
+
+[data-theme='dark'] .home-kuji__stripes {
+  background: repeating-linear-gradient(180deg, #a05555 0 14px, #3a3129 14px 28px);
+  border-right-color: #453a30;
+}
+
+[data-theme='dark'] .home-kuji__grades i {
+  background: #362e27;
+}
+
+@media screen and (max-width: 640px) {
+  .home-kuji__grades {
+    display: none;
+  }
+}
+
 /* ---------- 等宽字体点缀：日期 / 统计 / 标签计数 ---------- */
 time,
 .post-meta-date,

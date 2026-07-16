@@ -236,6 +236,10 @@
         saveDaily(st.dateKey, { win: win, pings: used })
       }
 
+      if (window.KitchasBag) {
+        window.KitchasBag.earn('sonar', { win: win, pings: used, mode: st.mode })
+      }
+
       var actions = root.querySelector('.kg-sonar__actions')
       diveBtn.remove()
       var shareBtn = document.createElement('button')

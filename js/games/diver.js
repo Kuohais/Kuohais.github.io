@@ -175,6 +175,10 @@
       var isNew = depth > best
       if (isNew) { setBest(depth); best = depth }
 
+      if (window.KitchasBag && depth > 0) {
+        window.KitchasBag.earn('diver', { depth: depth })
+      }
+
       var el = panel(
         '<h3>' + (isNew ? '🏆 新纪录！' : '🫧 氧气耗尽') + '</h3>' +
         '<p class="kg-panel__big">-' + depth + 'm</p>' +
