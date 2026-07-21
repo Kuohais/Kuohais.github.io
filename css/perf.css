@@ -173,6 +173,7 @@
   flex-wrap: wrap;
   gap: 0.65rem;
   align-items: stretch;
+  align-content: flex-start;
 }
 
 #recent-posts.home-latest > .home-latest__header {
