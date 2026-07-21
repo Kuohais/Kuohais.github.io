@@ -63,15 +63,15 @@ def transform_item(item: str) -> str:
 
 def main() -> None:
     html = INDEX.read_text(encoding='utf-8')
-    start = html.find('id="recent-posts"')
-    if start < 0:
+    open_m = re.search(r'<div[^>]*id="recent-posts"[^>]*>', html)
+    if not open_m:
         raise SystemExit('recent-posts not found')
+    start = open_m.start()
     pag = html.find('<nav id="pagination">', start)
     if pag < 0:
         raise SystemExit('pagination not found')
 
-    # section from id=... through content before pagination; include opening tag attrs
-    open_end = html.find('>', start) + 1
+    open_end = open_m.end()
     section_body = html[open_end:pag]
 
     header_m = re.search(
@@ -92,7 +92,10 @@ def main() -> None:
         items.append(section_body[s:e])
 
     cards = [transform_item(item) for item in items[:5]]
-    new_block = 'id="recent-posts" class="home-latest">' + header + ''.join(cards)
+    new_block = (
+        '<div class="recent-posts home-latest" id="recent-posts">'
+        + header + ''.join(cards)
+    )
     INDEX.write_text(html[:start] + new_block + html[pag:], encoding='utf-8')
     print(f'updated {len(cards)} home cards')
 
